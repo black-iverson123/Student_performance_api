@@ -1,4 +1,4 @@
-from api.utils.database import db
+from src.api.utils.database import db
 
 class Student(db.Model):
     __tablename__ = "student"
@@ -8,8 +8,8 @@ class Student(db.Model):
     email = db.Column(db.String(120), nullable=False, unique=True)
     grades = db.relationship('Grade', backref="student", lazy=True)
 
-    def __init__(self, firstname, lastname, email, grades):
-        self.lastname = lastname
+    def __init__(self, firstname, lastname, email):
+        self.firstname = firstname
         self.lastname = lastname
         self.email = email
         #self.grades = grades

@@ -1,17 +1,19 @@
-from api.models.student import Student
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from api.schema.grade_schema import GradeSchema
 from marshmallow import fields
-from api.utils.database import db
+from src.api.models.student import Student
+from src.api.utils.database import db
 
 class StudentSchema(SQLAlchemyAutoSchema):
-    class Meta(SQLAlchemyAutoSchema.Meta):
+    class Meta:
         model = Student
         load_instance = True
         sqla_session = db.session
+        include_relationships = True
 
     id = fields.Int(dump_only=True)
     firstname = fields.String(required=True)
     lastname = fields.String(required=True)
     email = fields.String(required=True)
-    grades = fields.Nested(GradeSchema, many=True, only=['student_id','course_id','score','status'])
+
+    # Each grade shows course info and performance
+    grades = fields.Nested("GradeSchema", many=True, exclude=("student",))

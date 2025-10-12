@@ -1,11 +1,11 @@
-from api.utils.database import db
+from src.api.utils.database import db
 
 
 class Grade(db.Model):
     __tablename__ = "grades"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=True)
-    course_id = db.Column(db.String(5), db.ForeignKey('course.id'), nullable=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=True)
     score = db.Column(db.Float(4), nullable=False)
     status = db.Column(db.String(10), nullable=False)
 

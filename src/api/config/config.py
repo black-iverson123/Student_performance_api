@@ -13,7 +13,7 @@ class DevelopmentConfig(Config):
     DEBUG = os.getenv("DEBUG")
     SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DEV_DATABASE_URI")
 
-class TestingConfig(config):
+class TestingConfig(Config):
     DEBUG = os.getenv("DEBUG")
     SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_TEST_DATABASE_URI")
 

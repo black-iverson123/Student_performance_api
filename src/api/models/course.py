@@ -1,4 +1,4 @@
-from api.utils.database import db
+from src.api.utils.database import db
 
 
 class Course(db.Model):
@@ -9,7 +9,7 @@ class Course(db.Model):
     passing_grade = db.Column(db.SmallInteger, nullable=False)
     grades = db.relationship("Grade", backref="course", lazy=True) 
 
-    def __init__(self, course_title, course_code, passing_grade, grades):
+    def __init__(self, course_title, course_code, passing_grade):
         self.course_title = course_title
         self.course_code = course_code
         self.passing_grade = passing_grade
