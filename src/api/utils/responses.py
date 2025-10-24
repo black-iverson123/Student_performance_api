@@ -64,6 +64,12 @@ SERVER_ERROR_401 = {
     "code": "unauthorized"
 }
 
+SERVER_ERROR_422 = {
+    "http_code": 422,
+    "code": "Invalid",
+    "message": ""
+}
+
 DUPLICATE_ENTRY_409 = {
     "http_code": 409,
     "code": "conflict",

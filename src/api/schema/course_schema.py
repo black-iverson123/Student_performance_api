@@ -9,11 +9,13 @@ class CourseSchema(SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
         include_relationships = True
+        unknown = 'exclude'
 
     id = fields.Int(dump_only=True)
     course_title = fields.String(required=True)
     course_code = fields.String(required=True)
     passing_grade = fields.Integer()
+    school_id = fields.String(required=False)
+    created_by = fields.String(required=False)
 
-    # Include all grades related to this course
     grades = fields.Nested("GradeSchema", many=True, exclude=("course", "id", "student_id"))

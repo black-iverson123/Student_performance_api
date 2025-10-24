@@ -7,12 +7,16 @@ class Student(db.Model):
     lastname = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     grades = db.relationship('Grade', backref="student", lazy=True)
+    school_id = db.Column(db.String(200), db.ForeignKey('admin.school_id'), nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
 
-    def __init__(self, firstname, lastname, email):
+    def __init__(self, firstname, lastname, email, school_id, is_active):
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
-        #self.grades = grades
+        self.school_id = school_id
+        self.is_active = is_active
+        
     
     def create(self):
         db.session.add(self)
