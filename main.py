@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, render_template
-from src.api.config.config import DevelopmentConfig, TestingConfig
+from src.api.config.config import DevelopmentConfig, TestingConfig, ProductionConfig
 from src.api.utils.database import db
 from src.api.routes.courses import course_routes
 from src.api.routes.grades import grade_routes
@@ -24,21 +24,15 @@ def create_app(config):
     app.register_blueprint(student_routes, url_prefix="/api/students")
     app.register_blueprint(admin_routes, url_prefix="/api/admin")
 
-    if os.getenv("FLASK_ENV") == "development":
-        app_config = DevelopmentConfig()
-    if os.getenv("FLASK_ENV") == "testing":
+    if os.environ.get('FLASK_ENV') == 'production':
+        app_config = ProductionConfig()
+    elif os.environ.get('FLASK_ENV') == 'testing':
         app_config = TestingConfig()
-    
+    else:
+        app_config = DevelopmentConfig()
+
     app.config.from_object(app_config)
 
-    db.init_app(app)
-    print("Loaded JWT_SECRET_KEY:", app.config["JWT_SECRET_KEY"])
-    jwt = JWTManager(app)
-    app.config['JWT_VERIFY_SUB'] = False
-    migrate = Migrate(app, db)
-
-    with app.app_context():
-        db.create_all()
 
     #Just to show the app is live
     @app.route('/')
@@ -51,7 +45,8 @@ def create_app(config):
         # Render html page
         return render_template("index.htm", **data)
 
-
+    jwt = JWTManager(app)
+    
     # Handle missing token
     @jwt.unauthorized_loader
     def missing_token_callback(error):
@@ -66,11 +61,18 @@ def create_app(config):
     @jwt.invalid_token_loader
     def invalid_token_callback(error):
         return response_with(resp.SERVER_ERROR_422, message=f"Invalid token. Please log in again. Details {error}")
+    
 
-        
+    db.init_app(app)
+    app.config['JWT_VERIFY_SUB'] = False
+    migrate = Migrate(app, db)
+
+    with app.app_context():
+        db.create_all()
+            
     return app
 
-app=create_app(None)
+app = create_app(None)
 
 if __name__ == "__main__":
-    app.run(port=os.getenv("FLASK_RUN_PORT"), host=os.getenv("FLASK_RUN_HOST"))
+    app.run(port=os.environ.get("FLASK_RUN_PORT"), host=os.environ.get("FLASK_RUN_HOST"))

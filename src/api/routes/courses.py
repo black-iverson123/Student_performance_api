@@ -50,7 +50,7 @@ def create_course():
         logging.debug(f"Alert: {str(error)}")
         return response_with(resp.INVALID_INPUT_422)
 
-
+# remember to apply pagination here
 @course_routes.get('/')
 @jwt_required()
 def get_courses():

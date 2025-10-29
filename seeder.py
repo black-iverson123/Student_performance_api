@@ -112,11 +112,15 @@ def create_grades(students, courses):
                 continue
 
             score = random.uniform(0, 100)
+            attendance = random.randrange(0, 100)
+            library_hour = random.randint(1,5)
             status = "Passed" if score >= course.passing_grade else "Failed"
             school_id = student.school_id  
             grade = Grade(
                 student_id=student.id,
                 course_id=course.id,
+                attendance=attendance,
+                library_hours=library_hour,
                 score=score,
                 status=status,
                 school_id=school_id,

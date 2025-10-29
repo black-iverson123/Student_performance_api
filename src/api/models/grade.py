@@ -6,6 +6,8 @@ class Grade(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    attendance = db.Column(db.Integer, nullable=False)
+    library_hours = db.Column(db.Integer, nullable=False)
     score = db.Column(db.Float(4), nullable=False)
     status = db.Column(db.String(10), nullable=False)
     school_id = db.Column(db.String(200), db.ForeignKey('admin.school_id'), nullable=False)
@@ -15,13 +17,15 @@ class Grade(db.Model):
         UniqueConstraint('student_id', 'course_id', 'school_id', name='uix_school_student_course'),
     )
 
-    def __init__(self, student_id, course_id, score, status, school_id, is_active):
+    def __init__(self, student_id, course_id, score, status, school_id, is_active, attendance, library_hours):
         self.student_id = student_id
         self.course_id = course_id
         self.score = score
         self.status = status
         self.school_id = school_id
         self.is_active = is_active
+        self.attendance = attendance
+        self.library_hours = library_hours
 
     def create(self):
         db.session.add(self)

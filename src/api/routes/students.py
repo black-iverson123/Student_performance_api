@@ -33,22 +33,30 @@ def load_jwt_context():
         # Handles routes where JWT isn't required or is missing
         g.school_id = None
         g.user_email = None
-        logging.debug(f"JWT context not set: {e}")
-
-
+        logging.debug(f"Alert: JWT context not set: {e}")
 @student_routes.post('/')
+@jwt_required()
 def create_student():
     data = request.get_json()
+    data["school_id"] = g.school_id
+
     student_schema = StudentSchema()
     student = student_schema.load(data)
+
     try:
         result = student_schema.dump(student.create())
-        return response_with(resp.SUCCESS_201, value={"student": result}, message=f"You've successfully added {student.firstname}")
+        return response_with(
+            resp.SUCCESS_201,
+            value={"student": result},
+            message=f"You've successfully added {student.firstname}"
+        )
     except Exception as error:
         logging.debug(f"Alert: {str(error)}")
         return response_with(resp.INVALID_INPUT_422)
 
+# remember to apply pagination
 @student_routes.get('/')
+@jwt_required()
 def get_students():
     students = Student.query.filter_by(school_id=g.school_id).all()
     student_schema =StudentSchema(many=True)
@@ -56,6 +64,7 @@ def get_students():
     return response_with(resp.SUCCESS_200, value={'students': data})
 
 @student_routes.get('/<int:student_id>')
+@jwt_required()
 def get_student_by_id(student_id):
     student  = Student.query.filter_by(school_id=g.school_id, id=student_id).first()
 

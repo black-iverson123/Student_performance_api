@@ -14,3 +14,7 @@ class AdminSchema(SQLAlchemyAutoSchema):
     id = fields.Int(dump_only=True)
     username = fields.String(required=True)
     email = fields.String(required=True)
+    password = fields.String(required=True)
+    school_name = fields.String(required=True)
+    school_acronym = fields.String(required=True)
+    school_id = fields.String(dump_only=True) 

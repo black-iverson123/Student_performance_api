@@ -18,4 +18,6 @@ class GradeSchema(SQLAlchemyAutoSchema):
     student = fields.Nested("StudentSchema", only=("firstname", "lastname", "email"))
     course = fields.Nested("CourseSchema", only=("course_code", "course_title"))
     score = auto_field()
+    library_hours = fields.Integer(required=True)
+    attendance = fields.Integer(required=True)
     status = fields.String(required=True)

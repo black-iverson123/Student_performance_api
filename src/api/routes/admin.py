@@ -39,10 +39,10 @@ def admin_login():
             additional_claims={"school_id": admin.school_id}
         )
 
-        print(str(access_token))
+        #print(str(access_token))
         return response_with(resp.SUCCESS_200, value={"access_token": access_token, "refresh_token": refresh_token}, message="Login successful.")
     else:
-        return response_with(resp.UNAUTHORIZED_401, message="Invalid email or password.")
+        return response_with(resp.UNAUTHORIZED_403, message="Invalid email or password.")
 
 
 @admin_routes.post('/refresh')
@@ -52,15 +52,14 @@ def refresh_access_token():
     new_access_token = create_access_token(identity=identity)
     return response_with(resp.SUCCESS_200, value={"access_token": new_access_token}, message="Token refreshed successfully.")
 
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 @admin_routes.get("/debug")
 @jwt_required()
 def debug_token():
-    # Get the main identity (email in your case)
+    # Get the main identity 
     identity = get_jwt_identity()
     
-    # Get the full token claims (contains your school_id, etc.)
+    # Get the full token claims
     claims = get_jwt()
     
     # Extract your custom claim

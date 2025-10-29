@@ -14,6 +14,7 @@ class StudentSchema(SQLAlchemyAutoSchema):
     firstname = fields.String(required=True)
     lastname = fields.String(required=True)
     email = fields.String(required=True)
-
+    school_id = fields.String(load_only=True)
+    is_active = fields.Boolean(load_default=True)
     # Each grade shows course info and performance
     grades = fields.Nested("GradeSchema", many=True, exclude=("student",))
