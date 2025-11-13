@@ -13,6 +13,7 @@ class Admin(db.Model):
     school_acronym = db.Column(db.String(20), nullable=False)
     school_id = db.Column(db.String(200), nullable=False, unique=True)
     students = db.relationship('Student', backref='admin', lazy=True)
+    #user = db.relationship('User', backref='admin', lazy=True)
 
 
     def __init__(self, username, email, password, school_name, school_acronym):

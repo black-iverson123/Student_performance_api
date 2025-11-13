@@ -16,4 +16,5 @@ def get_school_context(data: Dict, creator=True) -> Dict:
     if creator: 
         data['school_id'] = claims.get('school_id')
         data['created_by'] = email
+        data['admin_id'] = claims.get('admin_id')
     return data

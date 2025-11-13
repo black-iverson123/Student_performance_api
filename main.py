@@ -6,7 +6,8 @@ from src.api.routes.courses import course_routes
 from src.api.routes.grades import grade_routes
 from src.api.routes.students import student_routes
 from src.api.routes.admin import admin_routes
-from src.api.models import student, course, grade, admin
+from src.api.routes.user import user_routes
+from src.api.models import student, course, grade, admin, user
 from src.api.utils.responses import response_with
 from src.api.utils import responses as resp
 from src.api.utils.responses import data
@@ -23,6 +24,7 @@ def create_app(config):
     app.register_blueprint(grade_routes, url_prefix="/api/grades")
     app.register_blueprint(student_routes, url_prefix="/api/students")
     app.register_blueprint(admin_routes, url_prefix="/api/admin")
+    app.register_blueprint(user_routes, url_prefix="/api/users")
 
     if os.environ.get('FLASK_ENV') == 'production':
         app_config = ProductionConfig()

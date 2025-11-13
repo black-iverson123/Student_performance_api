@@ -34,6 +34,9 @@ def load_jwt_context():
         g.school_id = None
         g.user_email = None
         logging.debug(f"Alert: JWT context not set: {e}")
+
+
+#Routes
 @student_routes.post('/')
 @jwt_required()
 def create_student():

@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from src.api.utils.database import db
 from src.api.models.admin import Admin
 from src.api.schema.admin_schema import AdminSchema
+from src.api.models.user import User
+from src.api.schema.user_schema import UserSchema
 from src.api.utils.responses import response_with
 from src.api.utils import responses as resp
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
@@ -32,11 +34,11 @@ def admin_login():
     if admin and admin.check_password(password):
         access_token = create_access_token(
             identity=admin.email,  # string identity
-            additional_claims={"school_id": admin.school_id}
+            additional_claims={"school_id": admin.school_id, "admin_id": admin.id}
         )
         refresh_token = create_refresh_token(
             identity=admin.email,
-            additional_claims={"school_id": admin.school_id}
+            additional_claims={"school_id": admin.school_id, "admin_id": admin.id}
         )
 
         #print(str(access_token))
@@ -48,8 +50,9 @@ def admin_login():
 @admin_routes.post('/refresh')
 @jwt_required(refresh=True)
 def refresh_access_token():
+    current_claims = get_jwt()
     identity = get_jwt_identity()
-    new_access_token = create_access_token(identity=identity)
+    new_access_token = create_access_token(identity=identity, additional_claims=current_claims)
     return response_with(resp.SUCCESS_200, value={"access_token": new_access_token}, message="Token refreshed successfully.")
 
 
