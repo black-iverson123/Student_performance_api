@@ -5,6 +5,7 @@ from src.api.models.student import Student
 from src.api.models.course import Course
 from src.api.models.grade import Grade
 from src.api.models.admin import Admin
+from src.api.models.user import User
 from main import app
 
 fake = Faker()
@@ -133,6 +134,45 @@ def create_grades(students, courses):
     print(f"Info: Created {total_after - total_before} new grades.")
 
 
+
+def create_users_random(n, admins):
+    existing_users = User.query.count()
+    if existing_users >= n:
+        print(f"Alert: Found {existing_users} users, skipping user seeding.")
+        return User.query.all()
+
+    roles = ["teacher", "sub_admin"]
+    users = []
+
+    for _ in range(n):
+        firstname = fake.first_name()
+        lastname = fake.last_name()
+        email = f"{firstname.lower()}.{lastname.lower()}@example.com"
+        role = random.choice(roles)
+        admin = random.choice(admins)
+
+        if User.query.filter_by(email=email).first():
+            continue
+
+        # NOW we pass all required fields
+        user = User(
+            firstname=firstname,
+            lastname=lastname,
+            email=email,
+            role=role,
+            admin_id=admin.id,
+            school_id=admin.school_id,
+            password="user123",     # default password
+            is_active=True
+        )
+
+        db.session.add(user)
+        users.append(user)
+
+    db.session.commit()
+    print(f"Info: Created {len(users)} new users.")
+    return User.query.all()
+
 def seed_all():
     with app.app_context():
         print("Seeding data...")
@@ -140,6 +180,7 @@ def seed_all():
         courses = create_courses(20, admins)
         students = create_students(100, admins)
         create_grades(students, courses)
+        create_users_random(30, admins)
         print("✅ Data seeding completed successfully!")
 
 

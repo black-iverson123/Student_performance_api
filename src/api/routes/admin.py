@@ -34,11 +34,32 @@ def admin_login():
     if admin and admin.check_password(password):
         access_token = create_access_token(
             identity=admin.email,  # string identity
-            additional_claims={"school_id": admin.school_id, "admin_id": admin.id}
+            additional_claims={"school_id": admin.school_id, "admin_id": admin.id, "role": "admin"}
         )
         refresh_token = create_refresh_token(
             identity=admin.email,
-            additional_claims={"school_id": admin.school_id, "admin_id": admin.id}
+            additional_claims={"school_id": admin.school_id, "admin_id": admin.id, "role": "admin"}
+        )
+
+        #print(str(access_token))
+        return response_with(resp.SUCCESS_200, value={"access_token": access_token, "refresh_token": refresh_token}, message="Login successful.")
+    else:
+        return response_with(resp.UNAUTHORIZED_403, message="Invalid email or password.")
+
+@admin_routes.post('/user/login')
+def user_login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    user = User.query.filter_by(email=email).first()
+    if user and user.check_password(password):
+        access_token = create_access_token(
+            identity=user.email,  # string identity
+            additional_claims={"school_id": user.school_id, "user_id": user.id, "role": user.role}
+        )
+        refresh_token = create_refresh_token(
+            identity=user.email,
+            additional_claims={"school_id": user.school_id, "user_id": user.id, "role": user.role}
         )
 
         #print(str(access_token))

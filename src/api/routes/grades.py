@@ -8,6 +8,7 @@ from src.api.utils.responses import response_with
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from src.api.utils import responses as resp
 from src.api.utils.helper import get_school_context
+from src.api.utils.access_control import permission_required
 import logging
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -40,9 +41,9 @@ def load_jwt_context():
 
 
 #ROUTES
-
 @grade_routes.post('/')
 @jwt_required()
+@permission_required("grades", "upload")
 def upload_grades():
     data = get_school_context(request.get_json())
     grade_schema = GradeSchema()
@@ -67,6 +68,7 @@ def upload_grades():
 
 @grade_routes.patch('/<int:course_id>/<int:student_id>')
 @jwt_required()
+@permission_required("grades", "update")
 def update_grade(course_id, student_id):
     data = request.get_json()
     grade = Grade.query.filter_by(school_id=g.school_id, course_id=course_id, student_id=student_id).first_or_404()
@@ -86,6 +88,7 @@ def update_grade(course_id, student_id):
 
 @grade_routes.patch('/deactivate/<int:course_id>/<int:student_id>')
 @jwt_required()
+@permission_required("grades", "delete")
 def archive_grade(course_id, student_id):
     grade = Grade.query.filter_by(school_id=g.school_id, course_id=course_id, student_id=student_id).first_or_404()
     if not grade:
@@ -105,6 +108,7 @@ def archive_grade(course_id, student_id):
 
 @grade_routes.patch('/activate/<int:course_id>/<int:student_id>')
 @jwt_required()
+@permission_required("grades", "restore")
 def unarchive_grade(course_id, student_id):
     grade = Grade.query.filter_by(school_id=g.school_id, course_id=course_id, student_id=student_id).first_or_404()
     if not grade:

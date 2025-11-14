@@ -4,6 +4,7 @@ from src.api.models.student import Student
 from src.api.schema.student_schema import StudentSchema
 from src.api.utils.responses import response_with
 from src.api.utils import responses as resp
+from src.api.utils.access_control import permission_required
 from flask_jwt_extended import jwt_required,get_jwt, get_jwt_identity
 import logging
 
@@ -39,6 +40,7 @@ def load_jwt_context():
 #Routes
 @student_routes.post('/')
 @jwt_required()
+@permission_required("students", "create")
 def create_student():
     data = request.get_json()
     data["school_id"] = g.school_id
@@ -60,6 +62,7 @@ def create_student():
 # remember to apply pagination
 @student_routes.get('/')
 @jwt_required()
+@permission_required("students", "get_all")
 def get_students():
     students = Student.query.filter_by(school_id=g.school_id).all()
     student_schema =StudentSchema(many=True)
@@ -68,6 +71,7 @@ def get_students():
 
 @student_routes.get('/<int:student_id>')
 @jwt_required()
+@permission_required("students", "get_one")
 def get_student_by_id(student_id):
     student  = Student.query.filter_by(school_id=g.school_id, id=student_id).first()
 
@@ -83,6 +87,7 @@ def get_student_by_id(student_id):
 
 @student_routes.patch('/<int:student_id>')
 @jwt_required()
+@permission_required("students", "update")
 def update_student(student_id):
     data = request.get_json()
     student = Student.query.filter_by(school_id=g.school_id, id=student_id).first()
@@ -101,6 +106,7 @@ def update_student(student_id):
 
 @student_routes.patch('/deactivate/<int:student_id>')
 @jwt_required()
+@permission_required("students", "delete")
 def archive_students(student_id):
     student = Student.query.filter_by(school_id=g.school_id, id=student_id).first()
     if not student:
@@ -118,6 +124,7 @@ def archive_students(student_id):
 
 @student_routes.patch('/activate/<int:student_id>')
 @jwt_required()
+@permission_required("students", "restore")
 def unarchive_students(student_id):
     student = Student.query.filter_by(school_id=g.school_id, id=student_id).first()
     if not student:

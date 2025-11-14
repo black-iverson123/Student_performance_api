@@ -6,6 +6,7 @@ from src.api.utils.responses import response_with
 from src.api.utils import responses as resp
 from src.api.utils.helper import get_school_context
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from src.api.utils.access_control import permission_required
 import logging
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -39,6 +40,7 @@ def load_jwt_context():
 # ROUTES
 @course_routes.post('/')
 @jwt_required()
+@permission_required("courses", "create")
 def create_course():
     data = get_school_context(request.get_json())
     course_schema = CourseSchema()
@@ -53,6 +55,7 @@ def create_course():
 # remember to apply pagination here
 @course_routes.get('/')
 @jwt_required()
+@permission_required("courses", "get_all")
 def get_courses():
     courses = Course.query.filter_by(school_id=g.school_id).all()
     course_schema = CourseSchema(many=True, only=['course_code', 'course_title', 'passing_grade'])
@@ -62,6 +65,7 @@ def get_courses():
 
 @course_routes.get('/<course_code>')
 @jwt_required()
+@permission_required("courses", "get_one")
 def get_course_by_code(course_code):
     course = Course.query.filter_by(course_code=course_code, school_id=g.school_id).first()
     if course is None:
@@ -77,6 +81,7 @@ def get_course_by_code(course_code):
 
 @course_routes.patch('/<course_code>')
 @jwt_required()
+@permission_required("courses", "update")
 def update_course(course_code):
     allowed_changes = ['course_title', 'passing_grade']
     data = get_school_context(request.get_json(), creator=False)
@@ -104,6 +109,7 @@ def update_course(course_code):
 
 @course_routes.delete('/<course_code>')
 @jwt_required()
+@permission_required("courses", "delete")
 def delete_course(course_code):
     course = Course.query.filter_by(course_code=course_code, school_id=g.school_id).first()
     if course is None:

@@ -6,14 +6,14 @@ PERMISSIONS = {
     "sub_admin": {
         "courses": ['create', 'get_all', 'get_one', 'update', 'view'],
         "students": ['create', 'get_all', 'get_one', 'update'],
-        "grades": ['create', 'update'],
+        "grades": ['upload', 'update','view'],
         "users": ['create', 'update', 'view'],
         "analytics": '*'
     },
     "teacher": {
         "courses": ['get_one', 'update', 'view'],
         "students": ['get_all', 'get_one'],
-        "grades": ['view'],
+        "grades": ['upload','view'],
         "analytics": ['view']
     },
     "admin": {
@@ -31,8 +31,8 @@ def permission_required(resource, action):
     :param resource: the resource to access, e.g., 'grades', 'students'
     :param action: the action to perform, e.g., 'create', 'view', 'update'
     """
-    def decorator(fn):
-        @wraps(fn)
+    def decorator(func):
+        @wraps(func)
         def wrapper(*args, **kwargs):
             claims = get_jwt()
             role = claims.get("role")
@@ -44,11 +44,11 @@ def permission_required(resource, action):
             
             # If permissions are '*' (all actions allowed)
             if allowed_actions == "*" or allowed_actions == ['*']:
-                return fn(*args, **kwargs)
+                return func(*args, **kwargs)
             
             if allowed_actions is None or action not in allowed_actions:
                 return jsonify({"message": f"Permission denied for {role} on {resource}:{action}"}), 403
             
-            return fn(*args, **kwargs)
+            return func(*args, **kwargs)
         return wrapper
     return decorator
