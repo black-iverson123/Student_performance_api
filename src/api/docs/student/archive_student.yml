@@ -1,0 +1,53 @@
+tags:
+  - Students
+
+get:
+  summary: Retrieve a student by ID
+  operationId: getStudentById
+
+  # Use the securityDefinitions name from src/api/utils/swag_tool.py
+  security:
+    - BearerAuth: []
+
+  produces:
+    - application/json
+
+  parameters:
+    - name: student_id
+      in: path
+      description: ID of the student to retrieve
+      required: true
+      type: integer
+      format: int64
+      example: 1
+
+responses:
+    "200":
+      description: Student details
+      schema:
+        type: object
+        properties:
+          student:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              firstname:
+                type: string
+                example: "John"
+              lastname:
+                type: string
+                example: "Doe"
+              email:
+                type: string
+                example: "john@example.com"
+              is_active:
+                type: boolean
+                example: true
+    "401":
+      description: Unauthorized - missing or invalid token
+    "403":
+      description: Forbidden - permission denied
+    "404":
+      description: Student not found

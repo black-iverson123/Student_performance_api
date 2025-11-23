@@ -1,0 +1,47 @@
+tags:
+  - Courses
+
+get:
+  summary: Get course by course_code
+  operationId: getCourseByCode
+
+  # Use the securityDefinition name from src/api/utils/swag_tool.py
+  security:
+    - BearerAuth: []
+
+  produces:
+    - application/json
+
+  parameters:
+    - name: course_code
+      in: path
+      description: Course code to lookup
+      required: true
+      type: string
+      example: "MTH101"
+
+responses:
+    "200":
+      description: Course details
+      schema:
+        type: object
+        properties:
+          course:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              course_title:
+                type: string
+                example: "Mathematics"
+              course_code:
+                type: string
+                example: "MTH101"
+              passing_grade:
+                type: integer
+                example: 50
+    "422":
+      description: Invalid course_code
+    "404":
+      description: Course not found

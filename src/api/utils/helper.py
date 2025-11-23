@@ -1,3 +1,17 @@
+"""
+School Context Utility Module
+=============================
+
+This module provides helper functions to enrich incoming request data with 
+contextual information from the currently authenticated user's JWT token. 
+It is primarily used to attach school-related identifiers and the creator's 
+email to request payloads.
+
+Functions:
+    get_school_context(data: Dict, creator=True) -> Dict
+        Adds the logged-in user's school_id, admin_id, and email to the provided data.
+"""
+
 from flask_jwt_extended import get_jwt, get_jwt_identity
 from typing import Dict
 

@@ -1,0 +1,56 @@
+tags:
+  - "Grades"
+
+post:
+  summary: Upload a single grade entry
+  operationId: uploadGrade
+
+  security:
+    - BearerAuth: []
+
+  parameters:
+    - in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        required:
+          - student_id
+          - course_id
+          - attendance
+          - library_hours
+          - score
+          - status
+          - term
+          - session_year
+        properties:
+          student_id: { type: integer, example: 12 }
+          course_id: { type: integer, example: 5 }
+          attendance: { type: integer, example: 85 }
+          library_hours: { type: integer, example: 12 }
+          score: { type: number, example: 78 }
+          status: { type: string, example: "passed" }
+          term: { type: string, example: "First" }
+          session_year: { type: string, example: "2024/2025" }
+
+responses:
+  "201":
+    description: Grade created successfully
+    schema:
+      type: object
+      properties:
+        grade:
+          type: object
+          properties:
+            id: { type: integer, example: 1 }
+            score: { type: number, example: 78 }
+            status: { type: string, example: "passed" }
+
+  "409":
+    description: Grade already exists
+
+  "422":
+    description: Missing required fields
+
+  "400":
+    description: Invalid data format

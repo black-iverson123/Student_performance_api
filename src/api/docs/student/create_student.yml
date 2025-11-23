@@ -1,0 +1,67 @@
+tags:
+  - Students
+
+post:
+  summary: Create a new student
+  operationId: createStudent
+
+ 
+  security:
+    - BearerAuth: []
+
+  consumes:
+    - application/json
+  produces:
+    - application/json
+
+  parameters:
+    - in: body
+      name: body
+      description: Student payload
+      required: true
+      schema:
+        type: object
+        required:
+          - firstname
+          - lastname
+          - email
+        properties:
+          firstname:
+            type: string
+            example: "John"
+          lastname:
+            type: string
+            example: "Doe"
+          email:
+            type: string
+            format: email
+            example: "john@example.com"
+      # Pre-fill the Try it out request body
+      example:
+        firstname: "John"
+        lastname: "Doe"
+        email: "john@example.com"
+
+responses:
+    "201":
+      description: Student created
+      schema:
+        type: object
+        properties:
+          student:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              firstname:
+                type: string
+                example: "John"
+              lastname:
+                type: string
+                example: "Doe"
+              email:
+                type: string
+                example: "john@example.com"
+    "400":
+      description: Bad request

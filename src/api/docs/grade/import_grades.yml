@@ -1,0 +1,40 @@
+tags:
+  - "Grades"
+
+post:
+  summary: Import grades asynchronously
+  operationId: importGradesAsync
+
+  security:
+    - BearerAuth: []
+
+  parameters:
+    - in: body
+      name: body
+      required: true
+      schema:
+        type: array
+        items:
+          type: object
+          properties:
+            student_id: { type: integer, example: 12 }
+            course_id: { type: integer, example: 5 }
+            attendance: { type: integer, example: 85 }
+            library_hours: { type: integer, example: 12 }
+            score: { type: number, example: 78 }
+            status: { type: string, example: "passed" }
+            term: { type: string, example: "First" }
+            session_year: { type: string, example: "2024/2025" }
+
+responses:
+  "200":
+    description: Grades import started
+    schema:
+      type: object
+      properties:
+        task_id:
+          type: string
+          example: "234af228-bd21-421c-8db3-a7382f44c111"
+
+  "422":
+    description: Grades list required

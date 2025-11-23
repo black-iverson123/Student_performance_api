@@ -9,8 +9,62 @@
 <body>
     <div class="box">
         <h2>{{ message }} 🚀</h2>
+
+        <p>
+            The <strong>Students Performance Manager API</strong> is a backend system designed to help schools 
+            efficiently manage students, courses, grades, staff users, attendance tracking, performance analytics, 
+            and administrative workflows. It provides a secure, role-based platform for recording academic data 
+            and generating insights that support learning outcomes and school operations.
+        </p>
+
+        <h3>🔐 Core Features</h3>
+        <ul>
+            <li><strong>User Authentication & Authorization</strong> — JWT-based login with role-specific permissions (Admin, Sub-Admin, Teacher).</li>
+            <li><strong>Student Management</strong> — Create, update, and fetch student records with contextual school information.</li>
+            <li><strong>Course Management</strong> — Register courses and assign them to students or teachers.</li>
+            <li><strong>Grades & Assessment</strong> — Upload, update, and view student grades, attendance, library hours, and performance status.</li>
+            <li><strong>Bulk Import System</strong> — Background grade imports powered by Celery for efficient asynchronous processing.</li>
+            <li><strong>Analytics Dashboard (API)</strong> — Provides insight into pass/fail rates, course difficulty, student performance trends, etc.</li>
+            <li><strong>Error-Standardized Responses</strong> — Consistent HTTP error codes and unified JSON response structure.</li>
+            <li><strong>School Context Binding</strong> — Automatically binds authenticated user’s school_id and admin_id to every created record.</li>
+        </ul>
+
+        <h3>🛠 Technologies Used</h3>
+        <ul>
+            <li><strong>Flask</strong> — Backend framework</li>
+            <li><strong>SQLAlchemy</strong> — ORM for database models</li>
+            <li><strong>Celery + Redis</strong> — Background task processing</li>
+            <li><strong>JWT</strong> — Secure authentication</li>
+            <li><strong>PostgreSQL/MySQL/SQLite</strong> — Database options</li>
+        </ul>
+
+        <h3>📦 API Design Philosophy</h3>
+        <p>
+            This API follows strong software engineering principles:
+        </p>
+        <ul>
+            <li><strong>RESTful architecture</strong> for predictable routes.</li>
+            <li><strong>Modularization</strong> — Routes, models, services, and utilities are clearly separated.</li>
+            <li><strong>Role-based permissions</strong> applied through decorators.</li>
+            <li><strong>Standardized error format</strong> for easy API consumption by frontends and mobile apps.</li>
+            <li><strong>Scalable grade import workflows</strong> to support large schools.</li>
+        </ul>
+
+        <h3>📘 How to Use</h3>
+        <p>
+            API consumers can interact with the system by:
+        </p>
+        <ol>
+            <li>Using endpoints according to their assigned role permissions.</li>
+            <li>Sending JSON payloads for CRUD operations on students, courses, and grades.</li>
+            <li>Importing grade spreadsheets through the asynchronous task endpoint.</li>
+            <li>Consuming analytics endpoints to display dashboards or student insights.</li>
+        </ol>
+
+        <h3>👨‍💻 Developer</h3>
         <p>Creator: <strong>{{ creator }}</strong></p>
         <p>Profile: <a href="{{ profile }}" target="_blank">{{ profile }}</a></p>
+        <p>API Documentation <a href="http://localhost:5000/apidocs/"><button>Click here</button></a></p>
     </div>
 </body>
 </html>

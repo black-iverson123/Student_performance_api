@@ -1,0 +1,87 @@
+tags:
+    - "Admin"
+post:
+  summary: Create a new admin user
+  operationId: createAdmin
+
+  parameters:
+    - in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        required:
+          - username
+          - email
+          - password
+          - school_name
+          - school_acronym
+        properties:
+          username:
+            type: string
+            example: "john_doe"
+          email:
+            type: string
+            format: email
+            example: "admin@example.com"
+          password:
+            type: string
+            format: password
+            example: "strongpassword123"
+          school_name:
+            type: string
+            example: "Greenfield High School"
+          school_acronym:
+            type: string
+            example: "GHS"
+responses:
+    '201':
+      description: Resource created successfully
+      schema:
+        type: object
+        properties:
+          admin:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              username:
+                type: string
+                example: "john_doe"
+              email:
+                type: string
+                example: "admin@example.com"
+              school_name:
+                type: string
+                example: "Greenfield High School"
+              school_acronym:
+                type: string
+                example: "GHS"
+              school_id:
+                type: string
+                example: "GHS_a1b2c3"
+    '409':
+      description: Conflict — user may already exist
+      schema:
+        type: object
+        properties:
+          code:
+            type: string
+            example: conflict
+          message:
+            type: string
+            example: "User may already exist!!!"
+    '422':
+      description: Validation error
+      schema:
+        type: object
+        properties:
+          code:
+            type: string
+            example: invalidInput
+          message:
+            type: string
+            example: "Invalid input"
+
+

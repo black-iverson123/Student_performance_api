@@ -1,3 +1,80 @@
+
+"""
+User Model
+==========
+
+This module defines the `User` SQLAlchemy model, representing system users 
+(teachers, staff, or school admins) associated with a particular school.  
+It handles authentication (password hashing), authorization (roles), and 
+associates each user with their parent admin account.
+
+Model Purpose:
+    - Provide user accounts for teachers or school staff.
+    - Support authentication through secure password hashing.
+    - Associate users with a specific school and the admin who created them.
+    - Store user roles for permission-based access.
+
+Table Name:
+    user
+
+Fields:
+    id (Integer, PK):
+        Unique identifier for each user.
+
+    firstname (String(120), required):
+        User's first name.
+
+    lastname (String(120), required):
+        User's last name.
+
+    email (String(120), unique, required):
+        Primary login identifier. Ensures no duplicate accounts.
+
+    password (String(250), required):
+        Securely hashed password using Werkzeug. Plaintext is never stored.
+
+    role (String(50), default='teacher'):
+        Defines user privileges (e.g., 'teacher', 'staff', 'manager').
+
+    school_id (String(200), FK -> admin.school_id):
+        Ensures users belong to a specific school for multi-tenancy.
+
+    admin_id (Integer, FK -> admin.id):
+        References the admin who created this user account.
+
+    admin (relationship -> Admin):
+        Establishes an ORM relationship to the Admin entity.
+
+    is_active (Boolean, default=True):
+        Allows soft deletion / account deactivation.
+
+Methods:
+    __init__(firstname, lastname, email, password, role, school_id, admin_id, is_active):
+        Initializes the User instance and automatically hashes the password.
+
+    hash_password(password):
+        Static method. Returns a hashed version of the password.
+
+    check_password(password):
+        Verifies a password against the stored hash.
+
+    create():
+        Saves the user record in the database and commits the transaction.
+
+Usage Example:
+    user = User(
+        firstname="Jane",
+        lastname="Doe",
+        email="jane@example.com",
+        password="securepass123",
+        role="teacher",
+        school_id="SCH_ABC123",
+        admin_id=1,
+        is_active=True
+    )
+    user.create()
+"""
+
 from src.api.utils.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 

@@ -1,0 +1,89 @@
+tags:
+  - Users
+
+get:
+  summary: Retrieve users (paginated)
+  operationId: getUsers
+
+  produces:
+    - application/json
+
+  security:
+    - BearerAuth: []
+
+  parameters:
+    - name: page
+      in: query
+      description: Page number (1-based)
+      required: false
+      type: integer
+      format: int32
+      default: 1
+    - name: per_page
+      in: query
+      description: Items per page
+      required: false
+      type: integer
+      format: int32
+      default: 20
+    - name: search
+      in: query
+      description: Filter by firstname, lastname or email (partial match)
+      required: false
+      type: string
+    - name: role
+      in: query
+      description: Filter by role
+      required: false
+      type: string
+
+responses:
+    "200":
+      description: Paginated list of users
+      schema:
+        type: object
+        properties:
+          users:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                firstname:
+                  type: string
+                  example: "Jane"
+                lastname:
+                  type: string
+                  example: "Doe"
+                email:
+                  type: string
+                  example: "jane.doe@example.com"
+                role:
+                  type: string
+                  example: "teacher"
+                is_active:
+                  type: boolean
+                  example: true
+          pagination:
+            type: object
+            properties:
+              page:
+                type: integer
+                example: 1
+              per_page:
+                type: integer
+                example: 20
+              total:
+                type: integer
+                example: 57
+              pages:
+                type: integer
+                example: 3
+    "401":
+      description: Unauthorized
+    "403":
+      description: Forbidden - permission denied
+    "500":
+      description: Internal server error

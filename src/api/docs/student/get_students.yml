@@ -1,0 +1,81 @@
+tags:
+  - Students
+
+get:
+  summary: Retrieve students (paginated)
+  operationId: getStudents
+
+  security:
+    - BearerAuth: []
+
+  produces:
+    - application/json
+
+  parameters:
+    - name: page
+      in: query
+      description: Page number (1-based)
+      required: false
+      type: integer
+      format: int32
+      default: 1
+    - name: per_page
+      in: query
+      description: Items per page
+      required: false
+      type: integer
+      format: int32
+      default: 10
+    - name: search
+      in: query
+      description: Filter by firstname, lastname or email (partial match)
+      required: false
+      type: string
+
+responses:
+    "200":
+      description: Paginated list of students
+      schema:
+        type: object
+        properties:
+          students:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                firstname:
+                  type: string
+                  example: "John"
+                lastname:
+                  type: string
+                  example: "Doe"
+                email:
+                  type: string
+                  example: "john@example.com"
+                is_active:
+                  type: boolean
+                  example: true
+          pagination:
+            type: object
+            properties:
+              total:
+                type: integer
+                example: 125
+              page:
+                type: integer
+                example: 1
+              per_page:
+                type: integer
+                example: 10
+              pages:
+                type: integer
+                example: 13
+    "401":
+      description: Unauthorized
+    "403":
+      description: Forbidden — permission denied
+    "500":
+      description: Internal server error

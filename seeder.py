@@ -99,24 +99,30 @@ def create_students(n, admins):
     print(f"Info: Created {len(students)} new students.")
     return Student.query.all()
 
-
-def create_grades(students, courses):
+def create_grades(students, courses, term="First Term", session_year="2024/2025"):
     """Assign random grades to existing students for existing courses."""
     total_before = Grade.query.count()
 
     for student in students:
         num_courses = random.randint(2, len(courses))
         sampled_courses = random.sample(courses, num_courses)
+
         for course in sampled_courses:
-            existing = Grade.query.filter_by(student_id=student.id, course_id=course.id).first()
+            existing = Grade.query.filter_by(
+                student_id=student.id,
+                course_id=course.id,
+                term=term,
+                session=session_year
+            ).first()
+
             if existing:
                 continue
 
             score = random.uniform(0, 100)
             attendance = random.randrange(0, 100)
-            library_hour = random.randint(1,5)
+            library_hour = random.randint(1, 5)
             status = "Passed" if score >= course.passing_grade else "Failed"
-            school_id = student.school_id  
+
             grade = Grade(
                 student_id=student.id,
                 course_id=course.id,
@@ -124,16 +130,17 @@ def create_grades(students, courses):
                 library_hours=library_hour,
                 score=score,
                 status=status,
-                school_id=school_id,
+                school_id=student.school_id,
+                term=term,
+                session=session_year,
                 is_active=True
             )
+
             db.session.add(grade)
 
     db.session.commit()
     total_after = Grade.query.count()
-    print(f"Info: Created {total_after - total_before} new grades.")
-
-
+    print(f"Info: Created {total_after - total_before} new grades for {term} - {session_year}.")
 
 def create_users_random(n, admins):
     existing_users = User.query.count()
@@ -179,7 +186,7 @@ def seed_all():
         admins = create_admins(3)
         courses = create_courses(20, admins)
         students = create_students(100, admins)
-        create_grades(students, courses)
+        create_grades(students, courses, term="Second Term", session_year="2025/2026")
         create_users_random(30, admins)
         print("✅ Data seeding completed successfully!")
 

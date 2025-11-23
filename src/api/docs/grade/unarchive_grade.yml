@@ -1,0 +1,32 @@
+tags:
+  - "Grades"
+
+patch:
+  summary: Restore an archived grade
+  operationId: unarchiveGrade
+
+  security:
+    - BearerAuth: []
+
+  parameters:
+    - in: path
+      name: course_id
+      type: integer
+      required: true
+      example: 5
+
+    - in: path
+      name: student_id
+      type: integer
+      required: true
+      example: 12
+
+responses:
+  "200":
+    description: Grade restored successfully
+
+  "422":
+    description: Grade not found
+
+  "500":
+    description: Internal server error

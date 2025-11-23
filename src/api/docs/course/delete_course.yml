@@ -1,0 +1,32 @@
+tags:
+  - Courses
+
+delete:
+  summary: Delete a course
+  operationId: deleteCourse
+
+  security:
+    - BearerAuth: []
+
+  produces:
+    - application/json
+
+  parameters:
+    - name: course_code
+      in: path
+      description: Course code to delete
+      required: true
+      type: string
+      example: "ENG101"
+
+responses:
+    "202":
+      description: Course deleted successfully
+      schema:
+        type: object
+        properties:
+          message:
+            type: string
+            example: "Course queued for deletion."
+    "404":
+      description: Course not found

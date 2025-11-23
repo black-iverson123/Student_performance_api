@@ -1,0 +1,47 @@
+tags:
+  - "Admin"
+post:
+  summary: Admin login
+  operationId: adminLogin
+
+  parameters:
+    - in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+            example: "admin@example.com"
+          password:
+            type: string
+            format: password
+            example: "strongpassword123"
+responses:
+  '200':
+    description: Login successful — tokens returned
+    schema:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+        refresh_token:
+          type: string
+          example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+  '422':
+    description: Invalid credentials
+    schema:
+      type: object
+      properties:
+        code:
+          type: string
+          example: invalidInput
+        message:
+          type: string
+          example: "Invalid email or password."

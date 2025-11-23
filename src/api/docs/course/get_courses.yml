@@ -1,0 +1,64 @@
+tags:
+  - Courses
+
+get:
+  summary: Retrieve all courses (paginated)
+  operationId: getAllCourses
+
+  # Match securityDefinitions name in src/api/utils/swag_tool.py
+  security:
+    - BearerAuth: []
+
+  parameters:
+    - name: page
+      in: query
+      description: Page number (1-based)
+      required: false
+      type: integer
+      format: int32
+      default: 1
+    - name: per_page
+      in: query
+      description: Items per page
+      required: false
+      type: integer
+      format: int32
+      default: 10
+
+responses:
+    "200":
+      description: List of courses
+      schema:
+        type: object
+        properties:
+          courses:
+            type: array
+            items:
+              type: object
+              properties:
+                course_code:
+                  type: string
+                  example: "ENG101"
+                course_title:
+                  type: string
+                  example: "English Language"
+                passing_grade:
+                  type: integer
+                  example: 50
+          pagination:
+            type: object
+            properties:
+              total:
+                type: integer
+                example: 125
+              page:
+                type: integer
+                example: 1
+              per_page:
+                type: integer
+                example: 10
+              pages:
+                type: integer
+                example: 13
+    "401":
+      description: Unauthorized

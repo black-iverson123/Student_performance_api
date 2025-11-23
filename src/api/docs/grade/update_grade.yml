@@ -1,0 +1,45 @@
+tags:
+  - "Grades"
+
+patch:
+  summary: Update an existing grade
+  operationId: updateGrade
+
+  security:
+    - BearerAuth: []
+
+  parameters:
+    - in: path
+      name: course_id
+      type: integer
+      required: true
+      example: 5
+
+    - in: path
+      name: student_id
+      type: integer
+      required: true
+      example: 12
+
+    - in: body
+      name: body
+      required: true
+      schema:
+        type: object
+        properties:
+          attendance: { type: integer, example: 90 }
+          library_hours: { type: integer, example: 20 }
+          score: { type: number, example: 85 }
+          status: { type: string, example: "passed" }
+          term: { type: string, example: "First" }
+          session_year: { type: string, example: "2024/2025" }
+
+responses:
+  "200":
+    description: Grade updated successfully
+
+  "422":
+    description: Grade not found
+
+  "400":
+    description: Invalid data

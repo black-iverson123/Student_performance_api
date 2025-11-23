@@ -1,0 +1,82 @@
+tags:
+  - Students
+
+patch:
+  summary: Update a student
+  operationId: updateStudent
+
+  security:
+    - BearerAuth: []
+
+  consumes:
+    - application/json
+  produces:
+    - application/json
+
+  parameters:
+    - name: student_id
+      in: path
+      description: ID of the student to update
+      required: true
+      type: integer
+      format: int64
+      example: 1
+
+    - in: body
+      name: body
+      description: Fields to update (any of the listed)
+      required: true
+      schema:
+        type: object
+        properties:
+          firstname:
+            type: string
+            example: "Jane"
+          lastname:
+            type: string
+            example: "Doe"
+          email:
+            type: string
+            format: email
+            example: "jane@example.com"
+          is_active:
+            type: boolean
+            example: true
+        example:
+          firstname: "Jane"
+          lastname: "Doe"
+          email: "jane@example.com"
+          is_active: true
+
+responses:
+    "200":
+      description: Student updated successfully
+      schema:
+        type: object
+        properties:
+          student:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              firstname:
+                type: string
+                example: "Jane"
+              lastname:
+                type: string
+                example: "Doe"
+              email:
+                type: string
+                example: "jane@example.com"
+              is_active:
+                type: boolean
+                example: true
+    "400":
+      description: Bad request - invalid input
+    "401":
+      description: Unauthorized - missing or invalid token
+    "403":
+      description: Forbidden - permission denied
+    "404":
+      description: Student not found

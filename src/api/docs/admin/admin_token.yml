@@ -1,0 +1,29 @@
+tags:
+  - "Auth"
+post:
+  summary: Refresh access token
+  operationId: refreshToken
+
+  security:
+    - bearerAuth: []
+
+responses:
+  '200':
+    description: New access token created
+    schema:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+  '401':
+    description: Missing/invalid/expired refresh token
+    schema:
+      type: object
+      properties:
+        code:
+          type: string
+          example: unauthorized
+        message:
+          type: string
+          example: "Missing or invalid refresh token."

@@ -1,3 +1,8 @@
+"""
+Module for course routes:
+- Create, Read, Update and Delete methods
+"""
+
 from flask import Blueprint, request, g
 from src.api.utils.database import db
 from src.api.models.course import Course
@@ -7,10 +12,13 @@ from src.api.utils import responses as resp
 from src.api.utils.helper import get_school_context
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from src.api.utils.access_control import permission_required
+from flasgger import swag_from
 import logging
 
+#setting loggging
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
+#create and register blueprint for course routes
 course_routes = Blueprint("course_routes", __name__)
 
 # context handler
@@ -41,7 +49,9 @@ def load_jwt_context():
 @course_routes.post('/')
 @jwt_required()
 @permission_required("courses", "create")
+@swag_from('../docs/course/create_course.yml')
 def create_course():
+    """Creating a new course"""
     data = get_school_context(request.get_json())
     course_schema = CourseSchema()
     course = course_schema.load(data)
@@ -50,50 +60,66 @@ def create_course():
         return response_with(resp.SUCCESS_201, value={"course": result})
     except Exception as error:
         logging.debug(f"Alert: {str(error)}")
-        return response_with(resp.INVALID_INPUT_422)
+        return response_with(resp.VALIDATION_ERROR_422)
 
 # remember to apply pagination here
 @course_routes.get('/')
 @jwt_required()
 @permission_required("courses", "get_all")
+@swag_from('../docs/course/get_courses.yml')
 def get_courses():
-    courses = Course.query.filter_by(school_id=g.school_id).all()
+    """Retrieving all courses with pagination"""
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    pagination = Course.query.filter_by(school_id=g.school_id).paginate(page=page, per_page=per_page, error_out=False)
+    courses = pagination.items
     course_schema = CourseSchema(many=True, only=['course_code', 'course_title', 'passing_grade'])
     data = course_schema.dump(courses)
-    return response_with(resp.SUCCESS_200, value={'courses': data})
+    return response_with(resp.SUCCESS_200, value={'courses': data},
+                        pagination={
+                            'total': pagination.total,
+                            'page': pagination.page,
+                            'per_page': pagination.per_page,
+                            'pages': pagination.pages
+                        }
+                    )
 
 
 @course_routes.get('/<course_code>')
 @jwt_required()
 @permission_required("courses", "get_one")
+@swag_from('../docs/course/get_course.yml')
 def get_course_by_code(course_code):
+    """Retrieving specific ccourse by course_code"""
     course = Course.query.filter_by(course_code=course_code, school_id=g.school_id).first()
     if course is None:
-        return response_with(resp.INVALID_INPUT_422)
+        return response_with(resp.MISSING_PARAMETERS_422)
     try:
         course_schema = CourseSchema()
         data = course_schema.dump(course)
         return response_with(resp.SUCCESS_200, value={'course': data})
     except Exception as error:
         logging.debug(f"Alert: {str(error)}")
-        return response_with(resp.SERVER_ERROR_500)
+        return response_with(resp.BAD_REQUEST_400)
 
 
 @course_routes.patch('/<course_code>')
 @jwt_required()
 @permission_required("courses", "update")
+@swag_from('../docs/course/update_course.yml')
 def update_course(course_code):
+    """Update specific course details using course_code"""
     allowed_changes = ['course_title', 'passing_grade']
     data = get_school_context(request.get_json(), creator=False)
 
     # Enforce allowed changes
     for key in data.keys():
         if key not in allowed_changes:
-            return response_with(resp.INVALID_INPUT_422, message=f"Field '{key}' cannot be updated.")
+            return response_with(resp.MISSING_PARAMETERS_422, message=f"Field '{key}' cannot be updated.")
         
     course = Course.query.filter_by(course_code=course_code, school_id=g.school_id).first()
     if course is None:
-        return response_with(resp.INVALID_INPUT_422)
+        return response_with(resp.INVALID_FIELD_NAME_422)
 
     try:
         course_schema = CourseSchema(partial=True)
@@ -104,16 +130,18 @@ def update_course(course_code):
     except Exception as error:
         logging.debug(f"Alert: {str(error)}")
         db.session.rollback()
-        return response_with(resp.SERVER_ERROR_500)
+        return response_with(resp.INTERNAL_SERVER_ERROR_500)
 
 
 @course_routes.delete('/<course_code>')
 @jwt_required()
 @permission_required("courses", "delete")
+@swag_from('../docs/course/delete_course.yml')
 def delete_course(course_code):
+    """Deleting a specific course by provided course_code"""
     course = Course.query.filter_by(course_code=course_code, school_id=g.school_id).first()
     if course is None:
-        return response_with(resp.INVALID_INPUT_422)
+        return response_with(resp.MISSING_PARAMETERS_422)
     try:
         course_title = course.course_title
         db.session.delete(course)
@@ -122,4 +150,4 @@ def delete_course(course_code):
     except Exception as error:
         logging.debug(f"Alert {error}")
         db.session.rollback()
-        return response_with(resp.SERVER_ERROR_500)
+        return response_with(resp.INTERNAL_SERVER_ERROR_500)

@@ -1,0 +1,63 @@
+tags:
+  - Courses
+
+post:
+  summary: Create a new course
+  operationId: createCourse
+
+  security:
+    - BearerAuth: []
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - course_title
+            - course_code
+          properties:
+            course_title:
+              type: string
+              example: "Introduction to Biology"
+            course_code:
+              type: string
+              example: "BIO101"
+            passing_grade:
+              type: integer
+              example: 50
+        example:
+          course_title: "Introduction to Biology"
+          course_code: "BIO101"
+          passing_grade: 50
+
+responses:
+    "201":
+      description: Course created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              course:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  course_title:
+                    type: string
+                    example: "Introduction to Biology"
+                  course_code:
+                    type: string
+                    example: "BIO101"
+                  passing_grade:
+                    type: integer
+                    example: 50
+
+    "409":
+      description: Conflict — course may already exist
+
+    "422":
+      description: Validation error

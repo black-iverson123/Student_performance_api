@@ -1,0 +1,19 @@
+tags:
+  - "Grades"
+
+get:
+  summary: Download Excel template for uploading grades
+  operationId: downloadGradeTemplate
+
+  security:
+    - BearerAuth: []
+
+responses:
+  "200":
+    description: Excel file template
+    schema:
+      type: string
+      format: binary
+
+  "500":
+    description: Failed to generate grade template
